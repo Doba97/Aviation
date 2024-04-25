@@ -1,0 +1,136 @@
+---
+title: "AVIATION"
+author: "SORO DOBA et KAMAGATE YOUSSOUF"
+format: html
+editor: visual
+lang: fr
+toc: true
+---
+# INTRODUCTION
+
+L'aviation a toujours été confrontée à des défis en matière de sécurité, et une analyse approfondie des facteurs contributifs aux accidents au fil du temps est essentielle pour progresser vers des voyages aériens plus sûrs. Depuis 1962, l'évolution des technologies, des réglementations et des pratiques a eu un impact significatif sur la sécurité aérienne. Cette évolution soulève la question cruciale : comment ces facteurs ont-ils changé et quels enseignements peuvent-ils nous fournir pour améliorer la sécurité dans le domaine de l'aviation à l'avenir ? Cette étude vise à explorer ces transformations afin d'identifier les mesures proactives à prendre pour renforcer la sûreté des vols et prévenir les accidents aériens.
+
+# Préparation des données
+
+## Lecture du fichier de données avec la fonction *read.csv*
+
+```{r message=FALSE}
+library(tidyverse)
+data <- read_delim("AviationData.csv",delim=",",locale = locale(decimal_mark = "."))
+```
+
+## Les 10 première ligne de notre jeu de données avec la fonction *head*
+
+```{r}
+head(data,10)
+```
+
+## Le nombre de ligne et de colonne de jeu de données avec la fonction *dim*
+
+```{r}
+dim(data)
+```
+
+Avec cette fonction on remarque que notre jeu données contient 88889 lignes et 31 colonnes
+
+## Affichage des nom des variables et résumé des données
+
+### affichage des nom des variables avec la fonction *colnames*
+
+```{r}
+colnames(data)
+```
+
+
+### Conversions des variable avec factor
+
+```{r}
+data$Investigation.Type <- as.factor(data$Investigation.Type)
+data$Country<- as.factor(data$Country)
+data$Injury.Severity<- as.factor(data$Injury.Severity)
+data$Aircraft.Category<- as.factor(data$Aircraft.Category)
+data$Aircraft.damage<- as.factor(data$Aircraft.damage)
+data$Amateur.Built<- as.factor(data$Amateur.Built)
+data$Number.of.Engines<- as.factor(data$Number.of.Engines)
+data$Engine.Type<- as.factor(data$Engine.Type)
+data$Purpose.of.flight<- as.factor(data$Purpose.of.flight)
+data$Air.carrier<- as.factor(data$Air.carrier)
+data$Weather.Condition<- as.factor(data$Weather.Condition)
+data$Broad.phase.of.flight<- as.factor(data$Broad.phase.of.flight)
+data$Report.Status<- as.factor(data$Report.Status)
+data$Location<- as.factor(data$Location)
+data$Make<- as.factor(data$Make)
+data$Model<- as.factor(data$Model)
+```
+### Conversion des variable qualitative
+```{r}
+data$Latitude<-as.numeric(data$Latitude)
+data$Longitude<-as.numeric(data$Longitude)
+data$Latitude<-as.numeric(data$Latitude)
+data$Total.Fatal.Injuries<-as.numeric(data$Total.Fatal.Injuries)
+data$Total.Serious.Injuries<-as.numeric(data$Total.Serious.Injuries)
+data$Total.Minor.Injuries<-as.numeric(data$Total.Minor.Injuries)
+data$Total.Uninjured<-as.numeric(data$Total.Uninjured)
+```
+### résumé des données
+```{r}
+summary(data)
+```
+
+### Suppression des variable inutilisés 
+```{r}
+aviation_data <- data[, !(names(data) %in% c("Event.Id","Accident.Number","FAR.Description","Aircraft.Category","Number.of.Engines","Engine.Type"))]
+
+```
+
+```{r}
+colnames(aviation_data)
+```
+
+```{r}
+library(lubridate)
+# Convertit une chaîne de caractères en objet de type Date
+aviation_data$date <- ymd(aviation_data$Event.Date)
+# créer la colonne yeah à partir de la colonne date
+aviation_data$year <- year(aviation_data$date)
+# créer la colonne month à partir de la colonne date
+aviation_data$month <- month(aviation_data$date,label = T)
+# créer la colonne day à partir de la colonne date
+aviation_data$day <- day(aviation_data$date)
+# créer la colonne weekday à partir de la colonne date
+aviation_data$weekday <- wday(aviation_data$date,label = T)
+
+```
+
+
+```{r}
+str(aviation_data)
+```
+### Conversion des magiscules et minuscules 
+```{r}
+aviation_data$Make <- iconv(aviation_data$Make, to = "UTF-8", sub = "byte")
+aviation_data$Make <-tolower(aviation_data$Make)  
+aviation_data$Make <-as.factor(aviation_data$Make)
+#View(aviation_data)
+```
+
+```{r}
+aviation_data$Weather.Condition<-iconv(aviation_data$Weather.Condition,to="UTF-8",sub = "byte")
+aviation_data$Weather.Condition<-tolower(aviation_data$Weather.Condition)
+aviation_data$Weather.Condition<-as.factor(aviation_data$Weather.Condition)
+```
+
+
+```{r}
+aviation_data$Model <- iconv(aviation_data$Model, to = "UTF-8", sub = "byte")
+aviation_data$Model <-tolower(aviation_data$Model)  
+aviation_data$Model <-as.factor(aviation_data$Model)
+#View(aviation_data)
+```
+
+```{r}
+summary(aviation_data)
+```
+
+# PREMIÈRE ANALYSE 
+
